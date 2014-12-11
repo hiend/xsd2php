@@ -125,6 +125,9 @@ class YamlConverter extends AbstractConverter
 
     private function visitTypeBase(&$class, &$data, Type $type, $name)
     {
+        if ($type->getExtension()) {
+            $data["xml_root_name"] = $type->getExtension()->getBase()->getName();
+        }
         if ($type instanceof BaseComplexType) {
             $this->visitBaseComplexType($class, $data, $type, $name);
         }
@@ -146,9 +149,9 @@ class YamlConverter extends AbstractConverter
             $class[$ns] = &$data;
             $data["xml_root_name"] = $element->getName();
 
-            if ($schema->getTargetNamespace()) {
-                $data["xml_root_namespace"] = $schema->getTargetNamespace();
-            }
+//            if ($schema->getTargetNamespace()) {
+//                $data["xml_root_namespace"] = $schema->getTargetNamespace();
+//            }
             $this->classes[spl_object_hash($element)]["class"] = &$class;
 
             if (! $element->getType()->getName()) {
@@ -360,9 +363,9 @@ class YamlConverter extends AbstractConverter
 
             $property["xml_list"]["inline"] = false;
             $property["xml_list"]["entry_name"] = $itemOfArray->getName();
-            if ($schema->getTargetNamespace()) {
-                $property["xml_list"]["entry_namespace"] = $schema->getTargetNamespace();
-            }
+            //if ($schema->getTargetNamespace()) {
+            //    $property["xml_list"]["entry_namespace"] = $schema->getTargetNamespace();
+            //}
         } else {
             $property["type"] = $this->findPHPClass($class, $attribute);
         }
@@ -406,9 +409,9 @@ class YamlConverter extends AbstractConverter
         $property["access_type"] = "public_method";
         $property["serialized_name"] = $element->getName();
 
-        if ($schema->getTargetNamespace()) {
-            $property["xml_element"]["namespace"] = $schema->getTargetNamespace();
-        }
+//        if ($schema->getTargetNamespace()) {
+//            $property["xml_element"]["namespace"] = $schema->getTargetNamespace();
+//        }
 
         $property["accessor"]["getter"] = "get" . Inflector::classify($element->getName());
         $property["accessor"]["setter"] = "set" . Inflector::classify($element->getName());
@@ -428,9 +431,9 @@ class YamlConverter extends AbstractConverter
                 $property["type"] = "array<" . $visited["type"] . ">";
                 $property["xml_list"]["inline"] = false;
                 $property["xml_list"]["entry_name"] = $itemOfArray->getName();
-                if ($schema->getTargetNamespace()) {
-                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
-                }
+//                if ($schema->getTargetNamespace()) {
+//                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
+//                }
                 return $property;
             } elseif ($itemOfArray = $this->isArrayType($t)) {
 
@@ -449,16 +452,16 @@ class YamlConverter extends AbstractConverter
 
                 $property["xml_list"]["inline"] = false;
                 $property["xml_list"]["entry_name"] = $itemOfArray->getName();
-                if ($schema->getTargetNamespace()) {
-                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
-                }
+//                if ($schema->getTargetNamespace()) {
+//                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
+//                }
                 return $property;
             } elseif ($this->isArrayElement($element)) {
                 $property["xml_list"]["inline"] = true;
                 $property["xml_list"]["entry_name"] = $element->getName();
-                if ($schema->getTargetNamespace()) {
-                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
-                }
+//                if ($schema->getTargetNamespace()) {
+//                    $property["xml_list"]["namespace"] = $schema->getTargetNamespace();
+//                }
 
                 $property["type"] = "array<" . $this->findPHPClass($class, $element) . ">";
                 return $property;
